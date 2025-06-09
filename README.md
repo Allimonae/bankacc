@@ -51,6 +51,10 @@ DB_USER=your_db_user
 DB_PASS=your_db_password
 ```
 
+> **Note:**  
+> Spring Boot does not automatically read `.env` files.  
+> Before running your backend, set these environment variables in your terminal, or use a tool like [dotenv-cli](https://www.npmjs.com/package/dotenv-cli) to load them from your `.env` file.
+
 ### 3. Run the Backend
 
 ```sh
