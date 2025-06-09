@@ -8,7 +8,7 @@ import { Transactions } from './pages/Transactions'
 import { Runner } from './components/Runner'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { useLocation, Navigate } from 'react-router-dom'
-
+import { Actions } from './pages/Actions'
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -56,6 +56,11 @@ function App() {
           <Route path="/transactions" element={
             // <ProtectedRoute>
               <Transactions />
+            // </ProtectedRoute>
+          } />
+          <Route path="/actions" element={
+            // <ProtectedRoute>
+              <Actions />
             // </ProtectedRoute>
           } />
 

@@ -65,29 +65,42 @@ app.post('/api/accounts', (req, res) => {
     [owner, balance],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ id: this.lastID, owner, balance });
+      const accountId = this.lastID;
+      // If starting balance > 0, insert an initial deposit transaction
+      if (balance > 0) {
+        db.run(
+          'INSERT INTO transactions (account_id, type, amount) VALUES (?, ?, ?)',
+          [accountId, 'deposit', balance],
+          function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ id: accountId, owner, balance });
+          }
+        );
+      } else {
+        res.json({ id: accountId, owner, balance });
+      }
     }
   );
 });
 
-// API: Deposit to account
+// Deposit
 app.post('/api/accounts/:id/deposit', (req, res) => {
   const id = parseInt(req.params.id);
   const { amount } = req.body;
-  if (typeof amount !== 'number' || amount <= 0) {
-    return res.status(400).json({ error: 'Invalid deposit amount' });
-  }
-  getAccountById(id, (err, account) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!account) return res.status(404).json({ error: 'Account not found' });
+  // ...validation...
+  db.get('SELECT * FROM accounts WHERE id = ?', [id], (err, account) => {
+    // ...error handling...
     const newBalance = account.balance + amount;
     db.run('UPDATE accounts SET balance = ? WHERE id = ?', [newBalance, id], function (err) {
       if (err) return res.status(500).json({ error: err.message });
       db.run(
         'INSERT INTO transactions (account_id, type, amount) VALUES (?, ?, ?)',
-        [id, 'deposit', amount]
+        [id, 'deposit', amount],
+        function (err) {
+          if (err) return res.status(500).json({ error: err.message });
+          res.json({ id, owner: account.owner, balance: newBalance });
+        }
       );
-      res.json({ id, owner: account.owner, balance: newBalance });
     });
   });
 });
@@ -136,36 +149,33 @@ app.get('/api/accounts/:id/transactions', (req, res) => {
   const id = parseInt(req.params.id);
 
   db.all(
-    // Change ASC to DESC to get most recent transactions first
-    'SELECT * FROM transactions WHERE account_id = ? ORDER BY created_at DESC, id DESC',
+    'SELECT * FROM transactions WHERE account_id = ? ORDER BY created_at ASC, id ASC',
     [id],
     (err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
+        if (err) return res.status(500).json({ error: err.message });
 
-      // Calculate running balance for each transaction
-      db.get('SELECT balance FROM accounts WHERE id = ?', [id], (err, account) => {
+        db.get('SELECT balance FROM accounts WHERE id = ?', [id], (err, account) => {
         if (err) return res.status(500).json({ error: err.message });
         if (!account) return res.status(404).json({ error: 'Account not found' });
 
         // Start from the current balance and work backwards
         let runningBalance = account.balance;
-        // Copy and reverse to calculate backwards
         const reversed = [...rows].reverse();
         reversed.forEach(tx => {
-          tx.new_balance = runningBalance;
-          if (tx.type === 'deposit') {
+            tx.new_balance = runningBalance;
+            if (tx.type === 'deposit') {
             runningBalance -= tx.amount;
-          } else if (tx.type === 'withdrawal') {
+            } else if (tx.type === 'withdrawal') {
             runningBalance += tx.amount;
-          }
+            }
         });
-        // Reverse back to original order (which is now DESC)
+        // Reverse back to ascending order
         const withBalances = reversed.reverse();
 
         res.json(withBalances);
-      });
+        });
     }
-  );
+    );
 });
 
 // API: Delete a transaction

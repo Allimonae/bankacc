@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getTransactions } from "../api";
 
 export function Transactions() {
-  const accountId = 1; // Hardcoded for now
+  const accountId = 20; // Hardcoded for now
   const [transactions, setTransactions] = useState([]);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -22,7 +22,7 @@ export function Transactions() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white px-4 font-mono">
       <h2 className="text-2xl font-bold mb-4">Transactions for Account #{accountId}</h2>
       <input
-        className="mb-4 px-2 py-1 rounded text-black"
+        className="mb-4 px-2 py-1 rounded text-black bg-white"
         placeholder="Filter by type or amount"
         value={filter}
         onChange={e => { setPage(1); setFilter(e.target.value); }}
@@ -40,7 +40,16 @@ export function Transactions() {
         </thead>
         <tbody>
           {transactions.map((tx, i) => (
-            <tr key={tx.id}>
+            <tr
+              key={tx.id}
+              className={
+                tx.type === "deposit"
+                  ? "bg-green-100 text-green-900"
+                  : tx.type === "withdrawal"
+                  ? "bg-red-100 text-red-900"
+                  : ""
+              }
+            >
               <td className="px-2 py-1">{new Date(tx.created_at).toLocaleDateString()}</td>
               <td className="px-2 py-1">{new Date(tx.created_at).toLocaleTimeString()}</td>
               <td className="px-2 py-1">{tx.type}</td>
