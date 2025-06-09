@@ -1,34 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from 'react-router-dom'
+import { CreateAccount } from './pages/CreateAccount'
+import { HomeScreen } from './pages/HomeScreen'
+import { Settings } from './pages/Settings'
+import { SignIn } from './pages/SignIn'
+import { Welcome } from './pages/Welcome'
+import { Transactions } from './pages/Transactions'
+import { Runner } from './components/Runner'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import { useLocation, Navigate } from 'react-router-dom'
+
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    <div>
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center space-y-4">
+        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white text-xl font-mono">Loading...</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  if (!user) {
+    return <Navigate to="/sign-in" 
+    state={{ from: location.pathname, 
+    message: "You must be signed in to access settings"
+  }} 
+  replace 
+  />;
+  }
+
+  return children;
+};
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <Runner />
+      <main>
+        <AuthProvider>
+        <Routes> 
+          <Route path="/" element={<Welcome />} />
+          <Route path="/sign-up" element={<CreateAccount />} />
+          <Route path="/home" element={<HomeScreen />} />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } />
+          <Route path="/transactions" element={
+            <ProtectedRoute>
+              <Transactions />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/sign-in" element={<SignIn />} />
+        </Routes>
+        </AuthProvider>
+      </main>
+    </div>
   )
 }
 
