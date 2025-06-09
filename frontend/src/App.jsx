@@ -54,9 +54,9 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/transactions" element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <Transactions />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           } />
 
           <Route path="/sign-in" element={<SignIn />} />
