@@ -43,12 +43,12 @@ GRANT ALL PRIVILEGES ON your_db_name.* TO 'your_db_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-- Edit `backend/src/main/resources/application.properties`:
+- Create a `.env` file in the `backend` folder with your database credentials:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/your_db_name
-spring.datasource.username=your_db_user
-spring.datasource.password=your_db_password
+DB_URL=jdbc:mysql://localhost:3306/your_db_name
+DB_USER=your_db_user
+DB_PASS=your_db_password
 ```
 
 ### 3. Run the Backend
