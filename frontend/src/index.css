@@ -224,3 +224,103 @@ button:focus-visible {
   text-align: center;
   font-size: 14px;
 }
+
+/* Styling for the Create Account page */
+.create-account-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: lightgray; /* Match SignIn page background */
+  color: white;
+  font-family: 'Source Code Pro', monospace;
+}
+
+.create-account-logo {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 75px; /* Match SignIn page logo size */
+  font-weight: bold;
+  color: black; /* Match SignIn page logo color */
+  text-decoration: none;
+  display: inline-block;
+  margin: 20px;
+}
+
+.create-account-logo span {
+  font-style: italic;
+  color: #666666; /* Match SignIn page logo styling */
+}
+
+.create-account-logo:hover {
+  color: black; /* Ensure the color remains black on hover */
+}
+
+.create-account-logo span:hover {
+  color: #666666; /* Ensure the italicized "ish" remains the same color on hover */
+}
+
+.create-account-form-container {
+  background-color: #a0a2a7; /* Match SignIn page form background */
+  padding-top: 20px;
+  padding-bottom: 40px;
+  padding-right: 50px;
+  padding-left: 50px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 300px;
+}
+
+.create-account-form h2 {
+  text-align: center;
+  font-size: 24px;
+  color: #2b2c2e !important; /* Force the text color to be #2b2c2e */
+  margin-bottom: 20px;
+}
+
+.create-account-form input {
+  width: calc(100% - 20px); /* Match SignIn page input width */
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: none;
+  background-color: white; /* Corrected background color */
+  color: #2b2c2e; /* Corrected text color */
+}
+
+.create-account-form label {
+  color: #2b2c2e; /* Set label text color to #2b2c2e */
+  font-size: 15px; /* Optional: Adjust font size */
+  margin-bottom: 2px; /* Optional: Add spacing below labels */
+  display: block; /* Ensure labels are block elements */
+}
+
+.create-account-form button {
+  width: 100%;
+  padding: 10px;
+  margin-top :20px;
+  border-radius: 8px;
+  background-color: #6b7280; /* Match SignIn page button background */
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  transition: all 0.3s ease; /* Smooth transition */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.create-account-form button:hover {
+  background-color: #4b5563; /* Match SignIn page button hover effect */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.create-account-form button:active {
+  transform: translateY(2px); /* Button goes down on click */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+}
+
+.create-account-form .error-message {
+  color: red; /* Match SignIn page error message color */
+  text-align: center;
+  font-size: 14px;
+}
