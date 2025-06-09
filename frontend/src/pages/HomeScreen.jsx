@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Runner from "../components/Runner";
+import { ApiDemoButtons } from "../components/ApiDemoButtons";
 
 {/* The runner component is included on this page */}
 export function HomeScreen() {
@@ -21,6 +22,9 @@ export function HomeScreen() {
         </Link> 
 
         <Runner/>
-        </div>
+
+        {/* DELETE LATER - API demo buttons for testing the backend */}
+        <ApiDemoButtons />
+      </div>
     );
 }
