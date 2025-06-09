@@ -107,14 +107,17 @@ app.post('/api/accounts/:id/withdraw', (req, res) => {
     }
     const newBalance = account.balance - amount;
     db.run('UPDATE accounts SET balance = ? WHERE id = ?', [newBalance, id], function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      db.run(
-        'INSERT INTO transactions (account_id, type, amount) VALUES (?, ?, ?)',
-        [id, 'withdrawal', amount]
-      );
-      res.json({ id, owner: account.owner, balance: newBalance });
+        if (err) return res.status(500).json({ error: err.message });
+            db.run(
+                'INSERT INTO transactions (account_id, type, amount) VALUES (?, ?, ?)',
+                [id, 'withdrawal', amount],
+                function (err) {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ id, owner: account.owner, balance: newBalance });
+                }
+            );
+        });
     });
-  });
 });
 
 // API: Delete account
