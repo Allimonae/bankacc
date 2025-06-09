@@ -3,7 +3,7 @@ import { getTransactions } from "../api";
 import { useNavigate } from "react-router-dom";
 
 export function Transactions() {
-  const accountId = 20; // Hardcoded for now
+  const accountId = 21; // Hardcoded for now
   const [transactions, setTransactions] = useState([]);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(1);

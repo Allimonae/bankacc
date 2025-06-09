@@ -222,82 +222,91 @@ app.post('/api/accounts/:id/withdraw', (req, res) => {
   });
 });
 
-// --- Monthly Summary API ---
 app.get('/api/accounts/:id/summary/:year/:month', (req, res) => {
   const id = parseInt(req.params.id);
   const year = parseInt(req.params.year);
   const month = parseInt(req.params.month);
 
-  db.all(
-    `SELECT * FROM transactions WHERE account_id = ? AND strftime('%Y', created_at) = ? AND strftime('%m', created_at) = ? ORDER BY created_at ASC, id ASC`,
-    [id, year.toString(), month.toString().padStart(2, '0')],
-    (err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
+  // Get account creation time
+  db.get('SELECT created_at FROM accounts WHERE id = ?', [id], (err, account) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!account) return res.status(404).json({ error: 'Account not found' });
+    const accountCreatedAt = account.created_at;
 
-      // Calculate summary
-      let totalDeposited = 0, totalWithdrawn = 0;
-      let numDeposits = 0, numWithdrawals = 0;
-      let largestDeposit = 0, largestWithdrawal = 0;
-      let sumDeposit = 0, sumWithdrawal = 0;
-      let firstDate = null, lastDate = null;
+    db.all(
+      `SELECT * FROM transactions WHERE account_id = ? AND strftime('%Y', created_at) = ? AND strftime('%m', created_at) = ? ORDER BY created_at ASC, id ASC`,
+      [id, year.toString(), month.toString().padStart(2, '0')],
+      (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
 
-      rows.forEach(tx => {
-        if (!firstDate) firstDate = tx.created_at;
-        lastDate = tx.created_at;
-        if (tx.type === 'deposit') {
-          totalDeposited += tx.amount;
-          numDeposits++;
-          sumDeposit += tx.amount;
-          if (tx.amount > largestDeposit) largestDeposit = tx.amount;
-        } else if (tx.type === 'withdrawal') {
-          totalWithdrawn += tx.amount;
-          numWithdrawals++;
-          sumWithdrawal += tx.amount;
-          if (tx.amount > largestWithdrawal) largestWithdrawal = tx.amount;
-        }
-      });
+        // Filter out the initial deposit (transaction at account creation time)
+        const filteredRows = rows.filter(tx => tx.created_at !== accountCreatedAt);
 
-      // Get starting and ending balance for the month
-      db.all(
-        `SELECT * FROM transactions WHERE account_id = ? AND created_at <= ? ORDER BY created_at ASC, id ASC`,
-        [id, firstDate || `${year}-${month.toString().padStart(2, '0')}-01 00:00:00`],
-        (err, allRows) => {
-          if (err) return res.status(500).json({ error: err.message });
+        // Calculate summary as before, but use filteredRows
+        let totalDeposited = 0, totalWithdrawn = 0;
+        let numDeposits = 0, numWithdrawals = 0;
+        let largestDeposit = 0, largestWithdrawal = 0;
+        let sumDeposit = 0, sumWithdrawal = 0;
+        let firstDate = null, lastDate = null;
 
-          db.get('SELECT balance FROM accounts WHERE id = ?', [id], (err, account) => {
+        filteredRows.forEach(tx => {
+          if (!firstDate) firstDate = tx.created_at;
+          lastDate = tx.created_at;
+          if (tx.type === 'deposit') {
+            totalDeposited += tx.amount;
+            numDeposits++;
+            sumDeposit += tx.amount;
+            if (tx.amount > largestDeposit) largestDeposit = tx.amount;
+          } else if (tx.type === 'withdrawal') {
+            totalWithdrawn += tx.amount;
+            numWithdrawals++;
+            sumWithdrawal += tx.amount;
+            if (tx.amount > largestWithdrawal) largestWithdrawal = tx.amount;
+          }
+        });
+
+        // Get starting balance as before
+        db.all(
+          `SELECT * FROM transactions WHERE account_id = ? AND created_at < ? ORDER BY created_at ASC, id ASC`,
+          [id, `${year}-${month.toString().padStart(2, '0')}-01 00:00:00`],
+          (err, allRows) => {
             if (err) return res.status(500).json({ error: err.message });
-            if (!account) return res.status(404).json({ error: 'Account not found' });
 
-            let runningBalance = account.balance;
-            const reversed = [...allRows].reverse();
-            reversed.forEach(tx => {
-              if (tx.type === 'deposit') runningBalance -= tx.amount;
-              else if (tx.type === 'withdrawal') runningBalance += tx.amount;
-            });
-            const startingBalance = runningBalance;
-            const endingBalance = startingBalance + totalDeposited - totalWithdrawn;
+            db.get('SELECT balance FROM accounts WHERE id = ?', [id], (err, account) => {
+              if (err) return res.status(500).json({ error: err.message });
+              if (!account) return res.status(404).json({ error: 'Account not found' });
 
-            res.json({
-              month: `${year}-${month.toString().padStart(2, '0')}`,
-              startingBalance,
-              endingBalance,
-              totalDeposited,
-              totalWithdrawn,
-              numDeposits,
-              numWithdrawals,
-              largestDeposit,
-              largestWithdrawal,
-              avgDeposit: numDeposits ? sumDeposit / numDeposits : 0,
-              avgWithdrawal: numWithdrawals ? sumWithdrawal / numWithdrawals : 0,
-              netChange: endingBalance - startingBalance,
-              firstTransaction: firstDate,
-              lastTransaction: lastDate,
+              let runningBalance = account.balance;
+              const reversed = [...allRows].reverse();
+              reversed.forEach(tx => {
+                if (tx.type === 'deposit') runningBalance -= tx.amount;
+                else if (tx.type === 'withdrawal') runningBalance += tx.amount;
+              });
+              const startingBalance = runningBalance;
+              const endingBalance = startingBalance + totalDeposited - totalWithdrawn;
+
+              res.json({
+                month: `${year}-${month.toString().padStart(2, '0')}`,
+                startingBalance,
+                endingBalance,
+                totalDeposited,
+                totalWithdrawn,
+                numDeposits,
+                numWithdrawals,
+                largestDeposit,
+                largestWithdrawal,
+                avgDeposit: numDeposits ? sumDeposit / numDeposits : 0,
+                avgWithdrawal: numWithdrawals ? sumWithdrawal / numWithdrawals : 0,
+                netChange: endingBalance - startingBalance,
+                firstTransaction: firstDate,
+                lastTransaction: lastDate,
+              });
             });
-          });
-        }
-      );
-    }
-  );
+          }
+        );
+      }
+    );
+  });
 });
 
 // --- Miscellaneous ---
