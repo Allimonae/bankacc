@@ -130,13 +130,42 @@ app.delete('/api/accounts/:id', (req, res) => {
   });
 });
 
-// API: Get all transactions for an account
+// API: Get all transactions for an account, including running new_balance
+// API: Get all transactions for an account, including running new_balance
 app.get('/api/accounts/:id/transactions', (req, res) => {
   const id = parseInt(req.params.id);
-  db.all('SELECT * FROM transactions WHERE account_id = ?', [id], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-  });
+
+  db.all(
+    // Change ASC to DESC to get most recent transactions first
+    'SELECT * FROM transactions WHERE account_id = ? ORDER BY created_at DESC, id DESC',
+    [id],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      // Calculate running balance for each transaction
+      db.get('SELECT balance FROM accounts WHERE id = ?', [id], (err, account) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!account) return res.status(404).json({ error: 'Account not found' });
+
+        // Start from the current balance and work backwards
+        let runningBalance = account.balance;
+        // Copy and reverse to calculate backwards
+        const reversed = [...rows].reverse();
+        reversed.forEach(tx => {
+          tx.new_balance = runningBalance;
+          if (tx.type === 'deposit') {
+            runningBalance -= tx.amount;
+          } else if (tx.type === 'withdrawal') {
+            runningBalance += tx.amount;
+          }
+        });
+        // Reverse back to original order (which is now DESC)
+        const withBalances = reversed.reverse();
+
+        res.json(withBalances);
+      });
+    }
+  );
 });
 
 // API: Delete a transaction

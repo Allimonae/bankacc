@@ -36,3 +36,10 @@ export async function withdraw(id, amount) {
   });
   return res.json();
 }
+
+export async function getTransactions(accountId, page = 1, pageSize = 10, filter = '') {
+  let url = `${API_URL}/api/accounts/${accountId}/transactions?page=${page}&pageSize=${pageSize}`;
+  if (filter) url += `&filter=${encodeURIComponent(filter)}`;
+  const res = await fetch(url);
+  return res.json();
+}
