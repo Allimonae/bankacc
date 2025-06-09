@@ -9,11 +9,11 @@ export function HomeScreen() {
         <h2 className="text-2xl font-mono font-bold">Bankish</h2>
         
         <Link to="/actions" className="px-4 py-2 bg-slate-900 text-white rounded hover:bg-slate-800 hover:text-white">
-            Actions
+            Withdraw or Deposit
         </Link>
 
         <Link to="/transactions" className="px-4 py-2 bg-slate-900 text-white rounded hover:bg-slate-800 hover:text-white">
-            Transactions
+            Transaction History
         </Link>
       </div>
     );

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTransactions } from "../api";
+import { useNavigate } from "react-router-dom";
 
 export function Transactions() {
   const accountId = 20; // Hardcoded for now
@@ -8,6 +9,8 @@ export function Transactions() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -21,6 +24,12 @@ export function Transactions() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white px-4 font-mono">
       <h2 className="text-2xl font-bold mb-4">Transactions for Account #{accountId}</h2>
+      <button
+        className="mb-4 bg-blue-200 text-blue-900 px-4 py-2 rounded shadow hover:bg-blue-300 transition"
+        onClick={() => navigate("/actions")}
+      >
+        Withdraw or Deposit
+      </button>
       <input
         className="mb-4 px-2 py-1 rounded text-black bg-white"
         placeholder="Filter by type or amount"

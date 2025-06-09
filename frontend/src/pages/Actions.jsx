@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAccount, deposit, withdraw } from "../api";
+import { useNavigate } from "react-router-dom";
 
 export function Actions() {
   const [accountId] = useState(20); // Change as needed for other accounts
@@ -7,6 +8,7 @@ export function Actions() {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
 
   // Fetch account balance on mount and after actions
   const fetchBalance = async () => {
@@ -99,6 +101,12 @@ export function Actions() {
           {message.text}
         </div>
       )}
+    <button
+        className="mt-2 bg-blue-200 text-blue-900 px-4 py-2 rounded shadow hover:bg-blue-300 transition"
+        onClick={() => navigate("/transactions")}
+      >
+        View Transaction History
+      </button>
     </div>
   );
 }
