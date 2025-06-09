@@ -43,3 +43,8 @@ export async function getTransactions(accountId, page = 1, pageSize = 10, filter
   const res = await fetch(url);
   return res.json();
 }
+
+export async function getMonthlySummary(accountId, year, month) {
+  const res = await fetch(`${API_URL}/api/accounts/${accountId}/summary/${year}/${month}`);
+  return res.json();
+}

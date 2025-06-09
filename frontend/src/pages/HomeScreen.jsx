@@ -15,6 +15,10 @@ export function HomeScreen() {
         <Link to="/transactions" className="px-4 py-2 bg-slate-900 text-white rounded hover:bg-slate-800 hover:text-white">
             Transaction History
         </Link>
+
+        <Link to="/summary" className="px-4 py-2 bg-slate-900 text-white rounded hover:bg-slate-800 hover:text-white">
+            Monthly Summary
+        </Link>
       </div>
     );
 }

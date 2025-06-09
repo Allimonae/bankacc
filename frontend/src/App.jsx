@@ -9,6 +9,7 @@ import { Runner } from './components/Runner'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { useLocation, Navigate } from 'react-router-dom'
 import { Actions } from './pages/Actions'
+import { Summary } from './pages/Summary'
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -61,6 +62,11 @@ function App() {
           <Route path="/actions" element={
             // <ProtectedRoute>
               <Actions />
+            // </ProtectedRoute>
+          } />
+          <Route path="/summary" element={
+            // <ProtectedRoute>
+              <Summary />
             // </ProtectedRoute>
           } />
 
