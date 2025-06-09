@@ -1,6 +1,6 @@
 # Bank Account Project
 
-This project is a full-stack web application with a **React + Vite** frontend and a **Java + Spring Boot + MySQL** backend.
+This project uses a **React + Vite** frontend and an **Express + SQLite** backend.
 
 ---
 
@@ -8,13 +8,10 @@ This project is a full-stack web application with a **React + Vite** frontend an
 
 - **Node.js** (v18+ recommended)
 - **npm** (comes with Node.js)
-- **Java 17** (or compatible)
-- **Maven** (comes with Spring Boot projects, or use the included `mvnw` script)
-- **MySQL Server** (v8+ recommended)
 
 ---
 
-## Backend Setup (Spring Boot + MySQL)
+## Backend Setup (Express + SQLite)
 
 ### 1. Install Dependencies
 
@@ -24,39 +21,26 @@ Navigate to the backend folder:
 cd backend
 ```
 
-Install Maven dependencies:
+Install npm dependencies:
 
 ```sh
-./mvnw clean install
-```
-*(On Windows, use `mvnw.cmd` instead of `./mvnw` if needed.)*
-
-### 2. Configure Database
-
-- Make sure MySQL is running.
-- Create a database and user (replace with your own values):
-
-```sql
-CREATE DATABASE your_db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'your_db_user'@'localhost' IDENTIFIED BY 'your_db_password';
-GRANT ALL PRIVILEGES ON your_db_name.* TO 'your_db_user'@'localhost';
-FLUSH PRIVILEGES;
+npm install
 ```
 
-- Create a `.env` file in the `backend` folder with your database credentials:
+### 2. Configure Environment Variables
+
+Create a `.env` file in the `backend` folder with your database settings:
 
 ```properties
-DB_URL=jdbc:mysql://localhost:3306/your_db_name
-DB_USER=your_db_user
-DB_PASS=your_db_password
+PORT=8080
+DB_FILE=./database.sqlite
 ```
 
 ### 3. Run the Backend
 
 ```sh
-./mvnw spring-boot:run
+node index.js
 ```
-*(Or use `mvnw.cmd spring-boot:run` on Windows)*
 
 The backend will start on [http://localhost:8080](http://localhost:8080).
 
