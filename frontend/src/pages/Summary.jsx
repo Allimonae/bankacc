@@ -44,21 +44,67 @@ export function Summary() {
         </button>
       </div>
       {summary && (
-        <div className="bg-slate-800 rounded shadow p-4 w-full max-w-md">
-          <div>Month: {summary.month}</div>
-          <div>Starting Balance: ${summary.startingBalance.toFixed(2)}</div>
-          <div>Ending Balance: ${summary.endingBalance.toFixed(2)}</div>
-          <div>Total Deposited: ${summary.totalDeposited.toFixed(2)}</div>
-          <div>Total Withdrawn: ${summary.totalWithdrawn.toFixed(2)}</div>
-          <div>Number of Deposits: {summary.numDeposits}</div>
-          <div>Number of Withdrawals: {summary.numWithdrawals}</div>
-          <div>Largest Deposit: ${summary.largestDeposit.toFixed(2)}</div>
-          <div>Largest Withdrawal: ${summary.largestWithdrawal.toFixed(2)}</div>
-          <div>Average Deposit: ${summary.avgDeposit.toFixed(2)}</div>
-          <div>Average Withdrawal: ${summary.avgWithdrawal.toFixed(2)}</div>
-          <div>Net Change: ${summary.netChange.toFixed(2)}</div>
-          <div>First Transaction: {summary.firstTransaction}</div>
-          <div>Last Transaction: {summary.lastTransaction}</div>
+        <div className="bg-slate-800 rounded shadow p-4 w-full max-w-md space-y-2">
+        <div className="font-bold text-lg mb-2">Month: {summary.month}</div>
+        
+        <div className="flex justify-between">
+            <span>Starting Balance:</span>
+            <span className="font-mono">${summary.startingBalance.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Ending Balance:</span>
+            <span className="font-mono">${summary.endingBalance.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Net Change:</span>
+            <span className="font-mono">${summary.netChange.toFixed(2)}</span>
+        </div>
+        <hr className="my-2 border-slate-600" />
+
+        <div className="flex justify-between">
+            <span>Total Deposited:</span>
+            <span className="font-mono text-green-400">${summary.totalDeposited.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Number of Deposits:</span>
+            <span>{summary.numDeposits}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Largest Deposit:</span>
+            <span className="font-mono">${summary.largestDeposit.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Average Deposit:</span>
+            <span className="font-mono">${summary.avgDeposit.toFixed(2)}</span>
+        </div>
+        <hr className="my-2 border-slate-600" />
+
+        <div className="flex justify-between">
+            <span>Total Withdrawn:</span>
+            <span className="font-mono text-red-400">${summary.totalWithdrawn.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Number of Withdrawals:</span>
+            <span>{summary.numWithdrawals}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Largest Withdrawal:</span>
+            <span className="font-mono">${summary.largestWithdrawal.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Average Withdrawal:</span>
+            <span className="font-mono">${summary.avgWithdrawal.toFixed(2)}</span>
+        </div>
+        <hr className="my-2 border-slate-600" />
+
+        <div className="flex justify-between">
+            <span>First Transaction:</span>
+            <span>{summary.firstTransaction}</span>
+        </div>
+        <div className="flex justify-between">
+            <span>Last Transaction:</span>
+            <span>{summary.lastTransaction}</span>
+        </div>
         </div>
       )}
     </div>
